@@ -1,0 +1,32 @@
+services:
+  petitluxe:
+    build: .
+    working_dir: /usr/src/app
+    ports:
+      - 3000:3000
+    command: npm run dev
+    env_file: .env
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /usr/src/app/app
+        - action: sync
+          path: ./public
+          target: /usr/src/app/public
+        - action: rebuild
+          path: ./prisma
+          target: /usr/src/app/prisma
+        - action: rebuild
+          path: ./package.json
+          target: /usr/src/app/package.json
+  postgres:
+    image: postgres:16.0
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: petitluxe
+    volumes:
+      - ./.data/postgres:/var/lib/postgresql/data
